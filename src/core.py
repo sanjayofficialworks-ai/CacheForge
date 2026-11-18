@@ -1,4 +1,4 @@
-from storage import InMemoryStorage
+from src.storage import InMemoryStorage
 class CacheEngine:
 
     def __init__(self,capacity):

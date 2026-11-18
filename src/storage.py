@@ -35,15 +35,15 @@ class InMemoryStorage:
         return self._dic.pop(key,None) is not None
 
 
-storage = InMemoryStorage(-3)
+# storage = InMemoryStorage(3)
 
-storage.set("A", 100)
-storage.set("B", 200)
-storage.set("C", 300)
+# storage.set("A", 100)
+# storage.set("B", 200)
+# storage.set("C", 300)
 
-print(len(storage._dic))
+# print(len(storage._dic))
 
-storage.set("B", 500)
+# storage.set("B", 500)
 
-print(len(storage._dic))
-print(vars(storage))
+# print(len(storage._dic))
+# print(vars(storage))
