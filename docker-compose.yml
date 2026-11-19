@@ -1,0 +1,14 @@
+services:
+  cacheforge:
+    build: .
+    image: cacheforge:latest
+    container_name: cacheforge
+    ports:
+      # host port : container port. Change HOST_PORT to use another host port.
+      - "${HOST_PORT:-3000}:3000"
+    environment:
+      # Starting slot count (1 to 20). Leave empty to use CACHE_CAPACITY from src/config.py.
+      CACHE_CAPACITY: "${CACHE_CAPACITY:-}"
+    init: true
+    restart: unless-stopped
+    stop_grace_period: 10s

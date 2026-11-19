@@ -1,0 +1,31 @@
+# Keep the build context small and free of local-only files.
+
+# Python environments and caches
+venv/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Secrets and local config
+.env
+.env.*
+
+# Git and editors
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Local run output and test artifacts
+.logs/
+.playwright-mcp/
+*.ipynb
+
+# Not needed inside the image
+tests/
+README.md
+start.sh
+Dockerfile
+docker-compose.yml
+.dockerignore
