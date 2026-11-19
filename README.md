@@ -32,9 +32,6 @@ Keys live in memory only. When the cache is full, the key that was used least re
 | Change the cache size from the web page | Done |
 | Run everything with one command (`./start.sh`) | Done |
 | Docker image and `docker-compose.yml` | Done |
-| TTL-based expiration | Planned |
-| Thread safety (locking in the storage layer) | Planned |
-| Automated tests (`tests/` is empty) | Planned |
 
 ## Screenshots
 
