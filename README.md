@@ -319,4 +319,3 @@ cache_forge/
 - Node.js: web server, reverse proxy to Flask, and Flask process manager
 - HTML, CSS and plain JavaScript: web console (no framework, no build step)
 - Docker: packaging
-- Pytest: planned
