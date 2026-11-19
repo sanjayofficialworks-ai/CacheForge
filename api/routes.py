@@ -18,7 +18,7 @@ def posting():
     value=data.get("value")
     entry=current_app.extensions["cache_engine"]
     entry.set(key,value)
-    return jsonify({"status":"success","message":"key and value are stored"}),200
+    return jsonify({"status":"success","message":"key and value are stored"}),201
 
 
 
@@ -30,4 +30,17 @@ def getting(key):
      entry=current_app.extensions["cache_engine"]
      value=entry.get(key)
      #entry.get(key,value)
+     if value is None:
+        return jsonify({"error": f"Key '{key}' not found"}), 404
+
      return jsonify({"key": key, "value": value}), 200
+
+@cache_bp.delete("/<key>")
+def delete(key):
+    entry=current_app.extensions["cache_engine"]
+    value=entry.delete(key)
+    if value is False:
+        return jsonify({"error": f"Key '{key}' not found"}), 404
+    return jsonify({"message":f" '{key}' deleted sucessfully"}), 200
+    
+    

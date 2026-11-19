@@ -1,7 +1,7 @@
 class InMemoryStorage:
     def __init__(self,capacity):
         self._dic={}
-        if not int(capacity)>0:
+        if not (isinstance(capacity,int) and not isinstance(capacity,bool) and capacity>0):
             raise ValueError ('INVALID')
         else:
             self.max_caps=capacity
@@ -35,7 +35,7 @@ class InMemoryStorage:
         return self._dic.pop(key,None) is not None
 
 
-# storage = InMemoryStorage(3)
+#storage = InMemoryStorage(89)
 
 # storage.set("A", 100)
 # storage.set("B", 200)
@@ -46,4 +46,4 @@ class InMemoryStorage:
 # storage.set("B", 500)
 
 # print(len(storage._dic))
-# print(vars(storage))
+#print(vars(storage))
