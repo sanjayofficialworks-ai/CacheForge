@@ -13,3 +13,7 @@ __pycache__/
 
 # IDE
 .vscode/
+
+# Local run output (start.sh) and browser-test artifacts
+.logs/
+.playwright-mcp/
