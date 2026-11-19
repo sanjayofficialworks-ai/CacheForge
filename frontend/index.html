@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CacheForge</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M5 25l4-14h14l4 14z' fill='%23FFB02E'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Spline+Sans+Mono:wght@400;600&display=swap">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="top">
+    <div class="wordmark">
+      <svg width="30" height="26" viewBox="0 0 30 26" aria-hidden="true">
+        <path d="M4 20l3.5-13h15L26 20z" fill="#FFB02E"/>
+        <path d="M2 24h26" stroke="#17232E" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <span>CacheForge</span>
+    </div>
+    <p class="health" id="health" role="status">
+      <span class="dot" aria-hidden="true"></span>
+      <span id="health-text">Checking server</span>
+    </p>
+  </header>
+
+  <main>
+    <section class="block" id="forge" aria-labelledby="forge-h">
+      <div class="head">
+        <div>
+          <h1 id="forge-h">In the cache</h1>
+          <p class="sub" id="count"></p>
+        </div>
+        <div class="tools">
+          <form class="slots" id="slots-form" novalidate>
+            <label for="slots-input">Slots</label>
+            <input id="slots-input" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" aria-describedby="slots-note">
+            <button class="btn ghost" type="submit" id="slots-apply">Set slots</button>
+          </form>
+          <button class="btn ghost" id="sample" type="button">Store sample keys</button>
+        </div>
+      </div>
+
+      <div class="rail" id="rail"></div>
+
+      <div class="axis">
+        <span class="l">Evicted first</span>
+        <i class="bar" aria-hidden="true"></i>
+        <span class="r">Most recent</span>
+      </div>
+      <p class="hint" id="hint" aria-live="polite"></p>
+      <p class="hint" id="slots-note"></p>
+      <p class="msg" id="slots-msg" role="status"></p>
+    </section>
+
+    <section class="block" aria-labelledby="cmd-h">
+      <h2 id="cmd-h">Commands</h2>
+      <div class="cmds">
+        <form class="cmd" id="store-form" novalidate>
+          <h3>Store</h3>
+          <p class="note">Adds a key, or replaces its value and makes it the most recent.</p>
+          <label for="store-key">Key</label>
+          <input id="store-key" name="key" type="text" autocomplete="off" spellcheck="false" placeholder="session:ana">
+          <label for="store-value">Value</label>
+          <input id="store-value" name="value" type="text" autocomplete="off" spellcheck="false" placeholder="pro">
+          <p class="fine">One key holds one value. The value is stored exactly as you type it.</p>
+          <button class="btn primary" type="submit">Store key</button>
+          <p class="msg" role="status"></p>
+        </form>
+
+        <form class="cmd" id="read-form" novalidate>
+          <h3>Read</h3>
+          <p class="note">Returns a value and makes the key the most recent.</p>
+          <label for="read-key">Key</label>
+          <input id="read-key" name="key" type="text" autocomplete="off" spellcheck="false" placeholder="session:ana">
+          <button class="btn primary" type="submit">Read key</button>
+          <p class="msg" role="status"></p>
+        </form>
+
+        <form class="cmd" id="delete-form" novalidate>
+          <h3>Delete</h3>
+          <p class="note">Removes a key and frees its slot.</p>
+          <label for="delete-key">Key</label>
+          <input id="delete-key" name="key" type="text" autocomplete="off" spellcheck="false" placeholder="session:ana">
+          <button class="btn danger" type="submit">Delete key</button>
+          <p class="msg" role="status"></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="log-h">
+      <div class="head">
+        <h2 id="log-h">Requests</h2>
+        <button class="btn ghost" id="clear-log" type="button">Clear log</button>
+      </div>
+      <ol class="log" id="log" aria-live="polite"></ol>
+      <p class="hint" id="log-empty">Requests you send appear here with the server's reply.</p>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
