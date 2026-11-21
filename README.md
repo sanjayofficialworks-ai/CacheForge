@@ -32,6 +32,8 @@ Keys live in memory only. When the cache is full, the key that was used least re
 | Change the cache size from the web page | Done |
 | Run everything with one command (`./start.sh`) | Done |
 | Docker image and `docker-compose.yml` | Done |
+| TTL-based expiration (optional per key) | Done |
+| Thread safety (locking in the storage layer) | Done |
 
 ## Screenshots
 
@@ -119,7 +121,7 @@ Reads count as use. A key you keep reading will not be evicted.
 ### What happens on each action
 
 ```
-Store    Store key → POST /cache/ {key, value} → Flask posting() → storage.set
+Store    Store key → POST /cache/ {key, value, ttl} → Flask posting() → storage.set
          201 → page applies the same LRU rule → ingot appears; the oldest slides off if full
 Read     Read key  → GET /cache/<key>          → Flask getting() → storage.get
          200 → ingot re-heats and moves to the hot end        404 → key removed from the page
@@ -163,8 +165,8 @@ Base URL: `http://localhost:8000` when you run Flask directly, or `http://localh
 | Method and path | Body | Success | Failure |
 |---|---|---|---|
 | `GET /cache/health` | none | `200` `{"service":"cacheforge","status":"healthy"}` | none |
-| `POST /cache/` | `{"key": "...", "value": "..."}` | `201` `{"status":"success","message":"key and value are stored"}` | see [Known limitations](#known-limitations) |
-| `GET /cache/<key>` | none | `200` `{"key":"...","value":"..."}` | `404` `{"error":"Key '<key>' not found"}` |
+| `POST /cache/` | `{"key": "...", "value": "...", "ttl": 30}` (`ttl` is optional, in seconds; omit or `null` for no expiry) | `201` `{"status":"success","message":"key and value are stored"}` | see [Known limitations](#known-limitations) |
+| `GET /cache/<key>` | none | `200` `{"key":"...","value":"..."}` | `404` `{"error":"Key '<key>' not found"}`, also returned once the key's TTL has passed |
 | `DELETE /cache/<key>` | none | `200` `{"message":" '<key>' deleted sucessfully"}` | `404` `{"error":"Key '<key>' not found"}` |
 
 Examples:
@@ -172,6 +174,8 @@ Examples:
 ```bash
 curl -X POST localhost:3000/cache/ -H 'Content-Type: application/json' \
      -d '{"key":"city","value":"Chennai"}'
+curl -X POST localhost:3000/cache/ -H 'Content-Type: application/json' \
+     -d '{"key":"token","value":"abc","ttl":30}'   # expires after 30 seconds
 curl localhost:3000/cache/city
 curl -X DELETE localhost:3000/cache/city
 curl localhost:3000/cache/health
@@ -275,8 +279,7 @@ cache_forge/
 ├── src/
 │   ├── config.py            CACHE_CAPACITY (default slot count)
 │   ├── core.py              CacheEngine, a thin wrapper over the storage
-│   ├── storage.py           InMemoryStorage: the LRU cache
-│   └── eviction.py          empty, reserved for TTL / eviction work
+│   ├── storage.py           InMemoryStorage: the LRU cache with TTL and a lock
 ├── frontend/
 │   ├── index.html           page structure
 │   ├── styles.css           heat colours, rail, forms, log
@@ -296,7 +299,7 @@ cache_forge/
 
 - **Invalid input returns a 500.** `POST /cache/` with a blank or non-string key, a `null` value, or no JSON body raises an unhandled error in Flask. The web page checks input first, so it does not trigger this. Calling the API directly can.
 - **Nothing is saved.** The cache lives in the memory of the Flask process. A restart, a `docker stop`, or a slot change clears every key.
-- **No thread safety yet.** The storage has no locking, and Flask's development server handles requests in threads.
+- **Expiry is lazy.** An expired key is only removed when it is read, so until then it still takes up a slot and can cause an LRU eviction.
 - **Development server.** Flask runs with its built-in server. For production use a proper WSGI server such as gunicorn.
 - **No endpoint lists keys**, which is why the web page keeps its own copy of the key order.
 - **Slots are limited to 1–20** in the web server. The backend itself accepts any positive integer.
@@ -304,8 +307,7 @@ cache_forge/
 
 ## Roadmap
 
-- TTL-based expiration
-- Locking in the storage layer
+- Remove expired keys in the background instead of only on read
 - Tests for the storage rules and every endpoint (pytest)
 - A `GET /cache/` endpoint that lists keys in order, so the web page can show the real cache instead of its own copy
 - Return `400` with a clear message for invalid input instead of `500`

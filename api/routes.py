@@ -16,8 +16,9 @@ def posting():
     data=request.get_json()
     key=data.get("key")
     value=data.get("value")
+    ttl=data.get("ttl")
     entry=current_app.extensions["cache_engine"]
-    entry.set(key,value)
+    entry.set(key,value,ttl)
     return jsonify({"status":"success","message":"key and value are stored"}),201
 
 

@@ -233,12 +233,20 @@
   }
 
   // One key, one value: the value is always sent as the plain text typed in.
-  async function storeKey(key, value) {
+  async function storeKey(key, value, ttlText = '') {
     const keyError = checkKey(key);
     if (keyError) return { ok: false, text: keyError };
     if (!value.trim()) return { ok: false, text: 'Enter a value.' };
 
-    const res = await api('POST', '/cache/', { key, value });
+    let ttl = null;
+    if (ttlText) {
+      if (!/^\d+$/.test(ttlText)) {
+        return { ok: false, text: 'TTL must be a whole number of seconds, or empty for no expiry.' };
+      }
+      ttl = Number(ttlText);
+    }
+
+    const res = await api('POST', '/cache/', { key, value, ttl });
     addLog('POST', '/cache/', res.status, res.status === 201 ? `Stored ${key}` : explain(res));
     if (res.status === 201) {
       touch(key, value);
@@ -322,7 +330,7 @@
   }
 
   const storeForm = bind('#store-form', (f) =>
-    storeKey(f.elements.key.value.trim(), f.elements.value.value));
+    storeKey(f.elements.key.value.trim(), f.elements.value.value, f.elements.ttl.value.trim()));
   bind('#read-form', (f) => readKey(f.elements.key.value.trim()));
   bind('#delete-form', (f) => deleteKey(f.elements.key.value.trim()));
 

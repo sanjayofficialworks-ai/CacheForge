@@ -64,6 +64,8 @@
           <input id="store-key" name="key" type="text" autocomplete="off" spellcheck="false" placeholder="session:ana">
           <label for="store-value">Value</label>
           <input id="store-value" name="value" type="text" autocomplete="off" spellcheck="false" placeholder="pro">
+          <label for="store-ttl">TTL in seconds (optional)</label>
+          <input id="store-ttl" name="ttl" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="leave empty for no expiry">
           <p class="fine">One key holds one value. The value is stored exactly as you type it.</p>
           <button class="btn primary" type="submit">Store key</button>
           <p class="msg" role="status"></p>
