@@ -17,3 +17,6 @@ __pycache__/
 # Local run output (start.sh) and browser-test artifacts
 .logs/
 .playwright-mcp/
+
+# Scratch notebooks
+*.ipynb
