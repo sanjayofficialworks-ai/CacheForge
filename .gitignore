@@ -20,3 +20,9 @@ __pycache__/
 
 # Scratch notebooks
 *.ipynb
+
+# Personal learning notes, not project docs
+docs/learnings-thread-safety-ttl.md
+
+# Local stress-test notes
+STRESS_TEST_RESULTS.md
